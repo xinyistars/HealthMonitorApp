@@ -1,0 +1,16 @@
+<resources>
+    <!-- Night Mode Colors -->
+    <color name="colorPrimary">#BB86FC</color> <!-- 主要颜色 -->
+    <color name="colorPrimaryDark">#3700B3</color> <!-- 深色主要颜色 -->
+    <color name="colorAccent">#03DAC5</color> <!-- 强调颜色 -->
+
+    <!-- Text Colors -->
+    <color name="primary_text">#FFFFFF</color> <!-- 白色文字 -->
+    <color name="secondary_text">#BDBDBD</color> <!-- 浅灰色文字 -->
+    <color name="white">#FFFFFF</color> <!-- 白色 -->
+    <color name="black">#000000</color> <!-- 黑色 -->
+    <color name="card_background">#121212</color> <!-- 卡片背景色 -->
+    <color name="divider">#333333</color> <!-- 分割线颜色 -->
+    <color name="divider_light">#555555</color> <!-- 浅色分割线 -->
+    <color name="green">#03DAC5</color> <!-- 绿色 -->
+</resources>

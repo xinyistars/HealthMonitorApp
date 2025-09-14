@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 平板上的文字稍大 -->
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+
+    <!-- 平板上的间距稍大 -->
+    <dimen name="padding_small">6dp</dimen>
+    <dimen name="padding_normal">10dp</dimen>
+    <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_large">18dp</dimen>
+</resources>
