@@ -228,31 +228,45 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateHealthDataUI(HealthData data) {
         try {
-            // 更新数值显示
-            setTextSafe(ecgValue, data.isEcgModuleOn() ?
+            boolean isDeviceOn = data.isDeviceOn();
+            boolean isEcgModuleOn = data.isEcgModuleOn() && isDeviceOn;
+            boolean isTempModuleOn = data.isTempModuleOn() && isDeviceOn;
+            boolean isHrModuleOn = data.isHrModuleOn() && isDeviceOn;
+            boolean isOxModuleOn = data.isOxModuleOn() && isDeviceOn;
+
+            // 更新数值显示 - 只有设备开启且模块开启时才显示数据
+            setTextSafe(ecgValue, isEcgModuleOn ?
                     String.format("%.2f", data.getEcgData()) + " mV" : "-- mV");
 
-            setTextSafe(temperatureValue, data.isTempModuleOn() ?
+            setTextSafe(temperatureValue, isTempModuleOn ?
                     String.format("%.1f", data.getTemperature()) + " °C" : "-- °C");
 
-            setTextSafe(heartRateValue, data.isHrModuleOn() ?
+            setTextSafe(heartRateValue, isHrModuleOn ?
                     data.getHeartRate() + " bpm" : "-- bpm");
 
-            setTextSafe(heartRateMaxValue, data.isHrModuleOn() ?
+            setTextSafe(heartRateMaxValue, isHrModuleOn ?
                     data.getHeartRateMax() + " bpm" : "-- bpm");
 
-            setTextSafe(heartRateMinValue, data.isHrModuleOn() ?
+            setTextSafe(heartRateMinValue, isHrModuleOn ?
                     data.getHeartRateMin() + " bpm" : "-- bpm");
 
-            setTextSafe(bloodOxygenValue, data.isOxModuleOn() ?
+            setTextSafe(bloodOxygenValue, isOxModuleOn ?
                     data.getBloodOxygen() + " %" : "-- %");
 
-            // 更新状态显示
-            updateModuleStatusUI(data);
+            // 更新状态显示 - 如果设备关闭，模块状态也显示为关闭
+            updateStatusViewSafe(ecgStatus, isEcgModuleOn);
+            updateStatusViewSafe(tempStatus, isTempModuleOn);
+            updateStatusViewSafe(hrStatus, isHrModuleOn);
+            updateStatusViewSafe(oxStatus, isOxModuleOn);
+
+            updateButtonTextSafe(ecgToggleBtn, data.isEcgModuleOn());
+            updateButtonTextSafe(tempToggleBtn, data.isTempModuleOn());
+            updateButtonTextSafe(hrToggleBtn, data.isHrModuleOn());
+            updateButtonTextSafe(oxToggleBtn, data.isOxModuleOn());
 
             // 同步心电模块状态到心电图视图
             if (ecgView != null) {
-                ecgView.setEcgModuleOn(data.isEcgModuleOn());
+                ecgView.setEcgModuleOn(isEcgModuleOn);
             }
 
         } catch (Exception e) {

@@ -1,5 +1,7 @@
 package com.example.healthmonitor;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -37,35 +39,68 @@ public class DataRepository {
         return deviceStatus;
     }
 
+    // 修改 generateRandomData 方法
     private HealthData generateRandomData() {
         HealthData data = new HealthData();
 
-        // 生成随机数据
-        int newHeartRate = random.nextInt(40) + 60; // 60-100 bpm
-        data.setEcgData(generateECGWaveform());
-        data.setTemperature(36.5f + random.nextFloat() * 1.5f); // 36.5-38.0°C
-        data.setHeartRate(newHeartRate);
-        data.setBloodOxygen(random.nextInt(6) + 95); // 95-100%
+        // 获取当前设备状态
+        Boolean isDeviceOn = deviceStatus.getValue();
 
-        // 更新心率极值
-        if (newHeartRate > currentHeartRateMax || currentHeartRateMax == 0) {
-            currentHeartRateMax = newHeartRate;
-        }
-        if (newHeartRate < currentHeartRateMin || currentHeartRateMin == 0) {
-            currentHeartRateMin = newHeartRate;
-        }
-        data.setHeartRateMax(currentHeartRateMax);
-        data.setHeartRateMin(currentHeartRateMin);
+        if (isDeviceOn != null && isDeviceOn) {
+            // 设备开启时生成随机数据
+            int newHeartRate = random.nextInt(40) + 60; // 60-100 bpm
+            data
+                    .setEcgData(generateECGWaveform());
+            data
+                    .setTemperature(36.5f + random.nextFloat() * 1.5f); // 36.5-38.0°C
+            data
+                    .setHeartRate(newHeartRate);
+            data
+                    .setBloodOxygen(random.nextInt(6) + 95); // 95-100%
 
-        data.setDeviceOn(deviceStatus.getValue() != null && deviceStatus.getValue());
+            // 更新心率极值
+            if (newHeartRate > currentHeartRateMax || currentHeartRateMax == 0) {
+                currentHeartRateMax
+                        = newHeartRate;
+            }
+            if (newHeartRate < currentHeartRateMin || currentHeartRateMin == 0) {
+                currentHeartRateMin
+                        = newHeartRate;
+            }
+            data
+                    .setHeartRateMax(currentHeartRateMax);
+            data
+                    .setHeartRateMin(currentHeartRateMin);
+        } else {
+            // 设备关闭时设置默认值或空值
+            data
+                    .setEcgData(0f);
+            data
+                    .setTemperature(0f);
+            data
+                    .setHeartRate(0);
+            data
+                    .setBloodOxygen(0);
+            data
+                    .setHeartRateMax(0);
+            data
+                    .setHeartRateMin(0);
+        }
+
+        data
+                .setDeviceOn(deviceStatus.getValue() != null && deviceStatus.getValue());
 
         // 保持模块状态
         HealthData currentData = healthData.getValue();
         if (currentData != null) {
-            data.setEcgModuleOn(currentData.isEcgModuleOn());
-            data.setTempModuleOn(currentData.isTempModuleOn());
-            data.setHrModuleOn(currentData.isHrModuleOn());
-            data.setOxModuleOn(currentData.isOxModuleOn());
+            data
+                    .setEcgModuleOn(currentData.isEcgModuleOn());
+            data
+                    .setTempModuleOn(currentData.isTempModuleOn());
+            data
+                    .setHrModuleOn(currentData.isHrModuleOn());
+            data
+                    .setOxModuleOn(currentData.isOxModuleOn());
         }
 
         return data;
@@ -118,9 +153,18 @@ public class DataRepository {
         }
     }
 
+    // 修改 toggleModule 方法，添加设备状态检查
     public void toggleModule(String module) {
         HealthData currentData = healthData.getValue();
         if (currentData == null) return;
+
+        // 检查设备是否开启
+        Boolean isDeviceOn = deviceStatus.getValue();
+        if (isDeviceOn == null || !isDeviceOn) {
+            // 设备未开启，不允许开启模块
+            Log.d("DataRepository", "Device is off, cannot toggle module: " + module);
+            return;
+        }
 
         HealthData newData = new HealthData();
         // 复制当前数据
